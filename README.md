@@ -90,6 +90,14 @@ This project processes continuously arriving order data, validates and enriches 
 
 ```
 ---
+# 🔄 How Streaming Was Implemented
+This pipeline uses Apache Spark Structured Streaming to process order data in near real time. Streaming ingestion is simulated using JSON files dropped into a source directory, mimicking continuous data flow. The Bronze layer reads from this directory using readStream() with an explicitly defined schema and writes data to Delta Lake using .writeStream().
+
+To ensure deterministic, repeatable processing, the pipeline uses .trigger(once=True), allowing micro-batch execution that supports reruns and scheduled orchestration. Each streaming write includes a dedicated checkpoint directory, enabling exactly-once guarantees and fault tolerance across runs.
+
+This setup mirrors real-world streaming ingestion from sources like Kafka or Event Hubs, while remaining easy to test, debug, and demonstrate locally.
+
+---
 
 ## ✅ Example Output – Monthly Revenue
 | order\_year | order\_month | total\_orders | total\_revenue | return\_rate\_pct | cancellation\_rate\_pct |
